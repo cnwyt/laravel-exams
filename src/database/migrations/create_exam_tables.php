@@ -46,7 +46,7 @@ class CreateExamTables extends Migration
         });
 
         // 试卷章节表(大题模块)
-        Schema::create('exam_sections', function (Blueprint $table) {
+        Schema::create('exam_paper_sections', function (Blueprint $table) {
             $table->increments('id')->comment('自增,试卷章节id');
             $table->unsignedInteger('user_id')->default(0);
             $table->unsignedInteger('paper_id')->default(0);

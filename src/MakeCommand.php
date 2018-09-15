@@ -26,7 +26,7 @@ class MakeCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Scaffold basic posts views and routes';
+    protected $description = '[laravel-exams]Scaffold basic views, models and routes';
 
     protected $stubDir = __DIR__ . '/console/stubs';
 
@@ -36,8 +36,8 @@ class MakeCommand extends Command
      * @var array
      */
     protected $views = [
-        'examPaperList.blade.php'   => 'examPaperList.blade.php',
-        'examPaperDetail.blade.php' => 'examPaperDetail.blade.php',
+        'examPaperList.stub.php'   => 'examPaperList.blade.php',
+        'examPaperDetail.stub.php' => 'examPaperDetail.blade.php',
     ];
 
     /**
@@ -46,7 +46,7 @@ class MakeCommand extends Command
      * @var array
      */
     protected $controllers = [
-        'ExamController.php'   => 'ExamController.php',
+        'ExamController.php'   => 'Exams/ExamController.php',
     ];
 
     /**
@@ -76,6 +76,7 @@ class MakeCommand extends Command
      */
     public function fire()
     {
+        $this->line(' => Start install exams: ');
         $this->createDirectories();
 
         $this->info(' => Start to generate [views] ...');
@@ -87,7 +88,9 @@ class MakeCommand extends Command
         $this->info(' => Start to generate [routes] ...');
         $this->exportRoutes();
 
-        $this->info('Posts scaffolding generated successfully.');
+        $this->exportMigration();
+
+        $this->info('=> :) Laravel-Exams scaffolding generated successfully.');
     }
 
     /**
@@ -97,6 +100,11 @@ class MakeCommand extends Command
      */
     protected function createDirectories()
     {
+        // 创建Exams子目录
+        if (! is_dir(app_path('Http/Controllers/Exams'))) {
+            mkdir(app_path('Http/Controllers/Exams'), 0755, true);
+        }
+
         if (! is_dir(resource_path('views/layouts'))) {
             mkdir(resource_path('views/layouts'), 0755, true);
         }
@@ -128,24 +136,26 @@ class MakeCommand extends Command
     protected function exportControllers()
     {
         foreach ($this->controllers as $key => $value) {
-            $destinationFilePath = app_path('Http/Controllers/' . $value );
+            $destinationFilePath = \app_path('Http/Controllers/' . $value );
             if (file_exists($destinationFilePath) && ! $this->option('force')) {
                 if (! $this->confirm("The [{$value}] controller already exists. Do you want to replace it?")) {
                     continue;
                 }
             }
-
-            // copy($this->stubDir . '/controller/'.$key, $destinationFilePath);
+            copy($this->stubDir . '/controllers/'.$key, $destinationFilePath);
                         
             $this->info(' => Start to generate [ExamController] ...');
-            file_put_contents(
-                $destinationFilePath,
-                $this->compileControllerStub($key)
-            );
+//            file_put_contents(
+//                $destinationFilePath,
+//                $this->compileControllerStub($key)
+//            );
 
         }
     }
 
+    /**
+     * 将路由配置追加到 routes/web.php 文件内容末尾
+     */
     protected function exportRoutes()
     {
         foreach ($this->routes as $key => $value) {
@@ -173,10 +183,30 @@ class MakeCommand extends Command
      */
     protected function compileControllerStub($fileName = '')
     {
-        return str_replace(
-            '{{namespace}}',
-            $this->getAppNamespace(),
-            file_get_contents($this->stubDir . '/controllers/' . $fileName)
+//        return str_replace('{{namespace}}', $this->getAppNamespace(),
+//            file_get_contents($this->stubDir . '/controllers/' . $fileName)
+//        );
+    }
+
+    protected function exportMigration()
+    {
+        $this->info(' => Start to generate [migration] ...');
+
+        $destFile = database_path('migrations/2018_09_15_204025_create_exam_tables.php');
+        if (file_exists($destFile)) {
+            if (! $this->confirm("The file [2018_09_15_204025_create_exam_tables] already exists. Do you want to replace it?")) {
+                $this->info(' => Start to generate [migration] ... cancel');
+                return;
+            }
+        }
+        $res =  copy(
+            __DIR__.'/database/migrations/create_exam_tables.php',
+            $destFile
         );
+        if ($res) {
+            $this->info('=> Start to generate [migration] ... ok');
+        } else {
+            $this->info('=> Start to generate [migration] ... fail');
+        }
     }
 }

@@ -36,17 +36,16 @@ class ExamServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        if ( ! class_exists('CreateExamTables')) {
-            // Publish the migration
-            $timestamp = date('Y_m_d_His', time());
-
-            $this->publishes([
-                __DIR__.'/database/migrations/create_exams_tables.php' => database_path('migrations/'.$timestamp.'_create_exams_tables.php'),
-            ], 'migrations');
-        }
+//        if ( ! class_exists('CreateExamTables')) {
+//            // Publish the migration
+//            $timestamp = date('Y_m_d_His', time());
+//
+//            $this->publishes([
+//                __DIR__.'/database/migrations/create_exam_tables.php' => database_path('migrations/'.$timestamp.'_create_exam_tables.php'),
+//            ], 'migrations');
+//        }
 
         $this->registerExams();
-        
     }
 
     public function registerExams(){
