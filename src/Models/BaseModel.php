@@ -1,6 +1,6 @@
 <?php
 
-namespace Cnwyt\Exam\Models;
+namespace Cnwyt\Exams\Models;
 
 use Cache;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
