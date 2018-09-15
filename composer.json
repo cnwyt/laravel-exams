@@ -1,6 +1,6 @@
 {
-    "name": "cnwyt/laravel-posts",
-    "description": "simple laravel posts system",
+    "name": "cnwyt/laravel-exams",
+    "description": "simple laravel examination system",
     "type": "library",
     "require": {
         "php": ">=7.0"
@@ -11,7 +11,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Cnwyt\\Posts\\": "src/"
+            "Cnwyt\\Exams\\": "src/"
         }
     },
     "license": "MIT",
